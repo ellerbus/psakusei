@@ -1,0 +1,19 @@
+<%- . ("$TemplateFolder/_Utilities.ps1") -%>
+<%- $proc = $class_name + "InsertOne" -%>
+<%- $project = $config.namespace + ".Database" -%>
+<%- $config.OutFile = "$project/Procedures/$class_name/$proc.sql" -%>
+
+create procedure <%= $table.schema %>.<%= $proc %>
+    <%= $primary_keys | ForEach-Object { Get-ProcedureParameter($_) } | Combine -Sep ",`n$(' ' * 4)" %>
+as
+
+insert into <%= $table.schema %>.<%= $table.Name %>
+    (
+        <%= $insert_columns | ForEach-Object { Get-ProcedureParameter($_) } | Combine -Sep ",`n$(' ' * 8)" %>
+    )
+    values
+    (
+        <%= $insert_columns | ForEach-Object { Get-ProcedureParameter($_) } | Combine -Sep ",`n$(' ' * 8)" %>
+    )
+
+go

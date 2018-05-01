@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>psakusei</id>
+    <version>0.0.38</version>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Code Generator via PowerShell</description>
+    <releaseNotes></releaseNotes>
+    <authors>Stu Ellerbusch</authors>
+    <copyright></copyright>
+    <tags>POCO, Code Generator, Database First</tags>
+    <dependencies>
+      <dependency id="DatabaseSchemaReader" version="[2.5.1,3)" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="tools\**\*.*" target="tools" />
+  </files>
+</package>

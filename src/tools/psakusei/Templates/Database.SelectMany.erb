@@ -1,0 +1,12 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $proc = $class_name + "SelectMany" -%>
+<%- $project = $config.namespace + ".Database" -%>
+<%- $config.OutFile = "Procedures/$class_name/$proc.sql" -%>
+
+create procedure dbo.<%= $proc %>
+as
+
+select	*
+from	dbo.<%= $table.Name %>
+
+go

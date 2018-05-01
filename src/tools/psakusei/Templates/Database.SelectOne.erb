@@ -1,0 +1,13 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $proc = $class_name + "SelectOne" -%>
+<%- $project = $config.namespace + ".Database" -%>
+<%- $config.OutFile = "Procedures/$class_name/$proc.sql" -%>
+
+create procedure dbo.<%= $proc %>
+    <%= $primary_keys | ForEach-Object { "@$($_.Name) $($_.DbDataType)" } | Combine -Sep ",`n$(' ' * 4)" %>
+as
+
+select	*
+from    dbo.<%= $table.Name %>
+where   <%= $primary_keys | ForEach-Object { "@$($_.Name) = $($_.Name)" } | Combine -Sep "`n'  and   '" %>
+go
