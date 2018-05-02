@@ -4,19 +4,19 @@
 <%- $config.OutFile = "Procedures/$class_name/$proc.sql" -%>
 
 create procedure dbo.<%= $proc %>
-    <%= $insert_columns | ForEach-Object { "@$($_.Name) $($_ | SqlType)" } | Combine -Sep ",`n$(' ' * 4)" %>
+    <%= $insert_columns | ForEach-Object { "@$($_.Name) $($_ | SqlType)" } | Combine -Sep ",`n$(' '*4)" %>
 as
 
 insert into <%= $table.schema %>.<%= $table.Name %>
     (
-        <%= $insert_columns | ForEach-Object { $_.Name } | Combine -Sep ",`n$(' ' * 8)" %>
+        <%= $insert_columns | ForEach-Object { $_.Name } | Combine -Sep ",`n$(' '*8)" %>
     )
     values
     (
-        <%= $insert_columns | ForEach-Object { "@$($_.Name)" } | Combine -Sep ",`n$(' ' * 8)" %>
+        <%= $insert_columns | ForEach-Object { "@$($_.Name)" } | Combine -Sep ",`n$(' '*8)" %>
     )
 
-<% if ($table.PrimaryKeyColumn.IsAutoNumber ) { -%>
+<% if ($table.HasAutoNumberColumn) { -%>
 set @<%= $table.PrimaryKeyColumn.Name %> = ident_current('dbo.<%= $table.Name %>')
 
 select	@<%= $table.PrimaryKeyColumn.Name %>

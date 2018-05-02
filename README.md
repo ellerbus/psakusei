@@ -15,9 +15,6 @@ During installation psakusei will create a `Templates` folder at the solution ro
 
 ```ps1
 PM\> Invoke-psakusei -ConnectionString "Data Source=.; Database=DBNAME; <creds>" -Template "Database*" -Table "Member" [-Force] [-Project "MyProject"] [-Provider "System.Data.SqlClient"]
-
-# Alias'd for those who don't want to type psakusei
-PM\> gencode -ConnectionString "Data Source=.; Database=DBNAME; <creds>" -Template "Database*" -Table "Member" [-Force] [-Project "MyProject"] [-Provider "System.Data.SqlClient"]
 ```
 
 - `-ConnectionString`: Required - The connection string to the desired database that contains the table
@@ -26,7 +23,7 @@ PM\> gencode -ConnectionString "Data Source=.; Database=DBNAME; <creds>" -Templa
 
 - `-Template`: Required - The filename of the template in the templates folder (not including the extension .erb, wildcards `*` allowed to run multiple templates)
 
-- `-Table`: Required - The name of the table to generate code with
+- `-Table`: Required - The name of the table to generate code with (case senstive by the way)
 
 - `-Project`: Optional - Defaults to current the Project, or specify the name of the project to attach the final code file to
 

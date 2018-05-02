@@ -1,0 +1,10 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $project = $config.namespace + ".Database" -%>
+<%- $config.OutFile = "Procedures/$class_name/$table_type.sql" -%>
+
+create type dbo.<%= $table_type %> as table
+(
+	<%= $columns | Where-Object { -not $_.IsComputed } | ForEach-Object { "$($_.Name) $($_ | SqlType)" } | Combine -Sep ",`n$(' '*4)" %>
+)
+
+go

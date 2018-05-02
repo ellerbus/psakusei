@@ -105,6 +105,8 @@ function Invoke-psakusei {
 
     $dteProject = GetProject $Project
 
+    Add-RequiredReferences $dteProject
+
     $solutionPath = Get-SolutionPathFrom $dteProject
 
     $solutionPath = Split-Path $solutionPath -Parent
@@ -224,4 +226,12 @@ function ShowConsole {
     $componentModel = Get-VSComponentModel
     $powerConsoleWindow = $componentModel.GetService([NuGetConsole.IPowerConsoleWindow])
     $powerConsoleWindow.Show()
+}
+
+function Add-RequiredReferences() {
+    Param([Parameter(Mandatory = $true)]$project)
+    
+    $schemaReference = $project.Object.References["DatabaseSchemaReader"]
+
+    Add-Type -Path $schemaReference.Path
 }

@@ -1,0 +1,15 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $proc = $class_name + "DeleteMany" -%>
+<%- $project = $config.namespace + ".Database" -%>
+<%- $config.OutFile = "Procedures/$class_name/$proc.sql" -%>
+
+create procedure dbo.<%= $proc %>
+	@items dbo.<%= $table_type %> readonly
+as
+
+delete	t
+from	dbo.<%= $table.Name %> t
+		inner join @items x
+			on	<%= $primary_keys | ForEach-Object { "t.$($_.Name) = x.$($_.Name)" } | Combine -Sep "`n$(' '*12)and " %>
+
+go

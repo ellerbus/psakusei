@@ -1,4 +1,7 @@
 $class_name = $table.name | Pascal
+$class_names = $class_name | Pluralize
+
+$table_type = $class_name + "TableType"
 
 $var_name = $class_name | Last | Lower
 $var_names = $class_name | Last | Lower | Pluralize

@@ -1,0 +1,63 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $proc = $class_name + "MergeOne" -%>
+<%- $project = $config.namespace + ".Database" -%>
+<%- $config.OutFile = "Procedures/$class_name/$proc.sql" -%>
+
+create procedure dbo.<%= $proc %>
+  	<%= $primary_keys | ForEach-Object { "@$($_.Name) $($_ | SqlType)" } | Combine -Sep ",`n$(' '*4)" %>,
+  	<%= $update_columns | ForEach-Object { "@$($_.Name) $($_ | SqlType)" } | Combine -Sep ",`n$(' '*4)" %>
+as
+ 
+declare @outputs table
+(
+    <%= $columns | Where-Object { $_.IsPrimaryKey -or $_.IsAutoNumber } | ForEach-Object { "$($_.Name) $($_ | SqlType)" } | Combine -Sep ",`n$(' '*4)" %>
+)
+ 
+begin transaction
+ 
+set xact_abort on
+ 
+merge into dbo.<%= $table.Name %> as tgt
+using
+(
+    select  <%= $primary_keys | ForEach-Object { "@$($_.Name) $($_.Name)" } | Combine -Sep ",`n$(' '*12)" %>,
+  	        <%= $update_columns | ForEach-Object { "@$($_.Name) $($_.Name)" } | Combine -Sep ",`n$(' '*12)" %>
+)
+as x
+on
+(
+    <%= $primary_keys | ForEach-Object { "tgt.$($_.Name) = x.$($_.Name)" } | Combine -Sep "`n$(' '*4)and " %>
+)
+ 
+when matched /* 'CONCURRENCY CHECK' and (tgt.rowversion = x.rowversion or x.rowversion is null)*/ then update set
+    <%= $update_columns | ForEach-Object { "tgt.$($_.Name) = x.$($_.Name)" } | Combine -Sep ",`n$(' '*4)" %>
+ 
+when not matched by target then insert
+(
+    <%= $insert_columns | ForEach-Object { $_.Name } | Combine -Sep ",`n$(' '*4)" %>
+)
+values
+(
+    <%= $insert_columns | ForEach-Object { "x.$($_.Name)" } | Combine -Sep ",`n$(' '*4)" %>
+)
+ 
+output  <%= $primary_keys | ForEach-Object { "Inserted.$($_.Name)" } | Combine -Sep ",`n$(' '*8)" %>
+into @outputs;
+ 
+/* 'CONCURRENCY CHECK'
+if @@rowcount <> 1
+begin
+ 
+    rollback
+ 
+    raiserror ('At least one record has changed or does not exist. (CONCURRENCY CHECK)', 16, 1)
+ 
+end
+*/
+ 
+commit
+ 
+select  *
+from    @outputs
+ 
+go

@@ -4,10 +4,10 @@
 <%- $config.OutFile = "Procedures/$class_name/$proc.sql" -%>
 
 create procedure dbo.<%= $proc %>
-    <%= $primary_keys | ForEach-Object { "@$($_.Name) $($_.DbDataType)" } | Combine -Sep ",`n$(' ' * 4)" %>
+    <%= $primary_keys | ForEach-Object { "@$($_.Name) $($_ | SqlType)" } | Combine -Sep ",`n$(' '*4)" %>
 as
 
 delete
 from    dbo.<%= $table.Name %>
-where   <%= $primary_keys | ForEach-Object { "@$($_.Name) = $($_.Name)" } | Combine -Sep "`n'  and   '" %>
+where   <%= $primary_keys | ForEach-Object { "$($_.Name) = @$($_.Name)" } | Combine -Sep "`n  and   " %>
 go

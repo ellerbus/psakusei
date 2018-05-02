@@ -1,0 +1,36 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $proc = $class_name + "UpsertOne" -%>
+<%- $project = $config.namespace + ".Database" -%>
+<%- $config.OutFile = "Procedures/$class_name/$proc.sql" -%>
+
+create procedure dbo.<%= $proc %>
+	<%= $primary_keys | ForEach-Object { "@$($_.Name) $($_ | SqlType)" } | Combine -Sep ",`n$(' '*4)" %>,
+	<%= $update_columns | ForEach-Object { "@$($_.Name) $($_ | SqlType)" } | Combine -Sep ",`n$(' '*4)" %>
+as
+
+update	dbo.<%= $table.Name %>
+set		<%= $update_columns | ForEach-Object { "$($_.Name) = @$($_.Name)" } | Combine -Sep ",`n$(' '*8)" %>
+where   <%= $primary_keys | ForEach-Object { "$($_.Name) = @$($_.Name)" } | Combine -Sep "`n  and   " %>
+
+if	@@rowcount = 0
+begin
+
+	insert into <%= $table.schema %>.<%= $table.Name %>
+		(
+			<%= $insert_columns | ForEach-Object { $_.Name } | Combine -Sep ",`n$(' '*12)" %>
+		)
+		values
+		(
+			<%= $insert_columns | ForEach-Object { "@$($_.Name)" } | Combine -Sep ",`n$(' '*12)" %>
+		)
+		
+	<%- if ($table.HasAutoNumberColumn) { -%>
+	set @<%= $table.PrimaryKeyColumn.Name %> = ident_current('dbo.<%= $table.Name %>')
+	<%- } -%>
+end
+
+<% if ($table.HasAutoNumberColumn) { -%>
+select	@<%= $table.PrimaryKeyColumn.Name %>
+<% } -%>
+
+go

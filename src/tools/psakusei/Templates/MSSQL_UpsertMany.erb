@@ -1,0 +1,27 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $proc = $class_name + "UpsertMany" -%>
+<%- $project = $config.namespace + ".Database" -%>
+<%- $config.OutFile = "Procedures/$class_name/$proc.sql" -%>
+
+create procedure dbo.<%= $proc %>
+	@items dbo.<%= $table_type %> readonly
+as
+
+update	t
+set		<%= $update_columns | ForEach-Object { "t.$($_.Name) = x$($_.Name)" } | Combine -Sep ",`n$(' '*8)" %>
+from	dbo.<%= $table.Name %> t
+		inner join @items x
+			on	<%= $primary_keys | ForEach-Object { "t.$($_.Name) = x.$($_.Name)" } | Combine -Sep "`n$(' '*12)and " %>
+
+
+insert into dbo.<%= $table.Name %>
+(
+	<%= $insert_columns | ForEach-Object { $_.Name } | Combine -Sep ",`n$(' '*4)" %>
+)
+select	<%= $insert_columns | ForEach-Object { "x.$($_.Name)" } | Combine -Sep ",`n$(' '*8)" %>
+from	@items x
+		left join dbo.<%= $table.Name %> t
+			on	<%= $primary_keys | ForEach-Object { "x.$($_.Name) = t.$($_.Name)" } | Combine -Sep "`n$(' '*12)and " %>
+where   <%= $primary_keys | ForEach-Object { "t.$($_.Name) is null" } | Combine -Sep "`n  and   " %>
+
+go
