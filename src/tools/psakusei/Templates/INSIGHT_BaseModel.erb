@@ -1,0 +1,70 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $config.OutFile = "Models/Generated/$class_name.cs" -%>
+using System;
+using Insight.Database;
+
+namespace <%= $config.Namespace %>.Models
+{
+    ///	<summary>
+    ///
+    ///	</summary>
+    public partial class <%= $class_name %> : Entities.<%= $class_name %>Entity
+    {
+        #region Constructors
+        
+		[SqlConstructor]
+        public <%= $class_name %>(<%= $columns | ForEach-Object { "$($_ | CsType) $($_.Name | Camel)" } | Combine -Sep ", " %>)
+            : base(<%= $columns | ForEach-Object { "$($_.Name | Camel)" } | Combine -Sep ", " %>)
+        {
+        }
+        
+        #endregion
+    }
+}
+
+namespace <%= $config.Namespace %>.Models.Entities
+{
+    ///	<summary>
+    /// Base Entity class that represents <%= $table.name %> - Intended to be extended
+    ///	for business rule implementation
+    ///	</summary>
+    public abstract class <%= $class_name %>Entity
+    {
+        #region Constructors
+
+        protected <%= $class_name %>Entity() {}
+
+        protected <%= $class_name %>Entity(<%= $columns | ForEach-Object { "$($_ | CsType) $($_.Name | Camel)" } | Combine -Sep ", " %>)
+        {
+            <%= $columns | ForEach-Object { "_$($_.Name | Camel) = $($_.Name | Camel)" } | Combine -Sep ";`n$(' '*12)" %>;
+        }
+        
+        #endregion
+
+        #region Misc Properties
+        
+        ///	<summary>
+        ///	Internally Managed 'Is' Modified Flag
+        ///	</summary>
+        public bool IsModified { get; internal set; }
+        
+        #endregion
+
+        #region Properties
+        <%- foreach ($column in $columns) { -%>
+
+        ///	<summary>
+        ///	Gets / Sets database column '<%= $column.Name %>'
+        ///	</summary>
+        [Column("<%= $column.Name %>")]
+        public virtual <%= $column | CsType %> <%= $column.Name | Pascal %>
+        {
+            get { return _<%= $column.Name | Camel %>; }
+            set { IsModified |= _<%= $column.Name | Camel %> != value; _<%= $column.Name | Camel %> = value; }
+        }
+        private <%= $column | CsType %> _<%= $column.Name | Camel %>;
+        
+        <%- } -%>
+        #endregion
+    }
+}

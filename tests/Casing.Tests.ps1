@@ -89,6 +89,10 @@ Describe "Casing" {
             $items = "Some_FUNNYName" | Camel
             $items | Should Be "someFunnyName"
         }
+        It "should camel case (member_id)" {
+            $items = "member_id" | Camel
+            $items | Should Be "memberId"
+        }
     }
     Context "global:Last" {
         It "should get last word" {

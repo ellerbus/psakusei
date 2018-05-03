@@ -31,7 +31,7 @@ function global:CsType() {
         "*char" { $cs_type = "string" }
     }
 
-    if ($column.is_nullable -and $cs_type -ne "string") {
+    if ($column.IsNullable -and $cs_type -ne "string") {
         $cs_type = $cs_type + "?"
     }
 

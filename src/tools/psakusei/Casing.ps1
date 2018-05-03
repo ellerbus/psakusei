@@ -129,7 +129,7 @@ function global:Camel {
     
     $parts = Split($text)
     
-    for ($x = 0; $x -lt $part.Length; $x += 1) {
+    for ($x = 0; $x -lt $parts.Length; $x += 1) {
         if ($x -eq 0) {
             $parts[$x] = $parts[$x] | Lower
         }
