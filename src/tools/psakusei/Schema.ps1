@@ -13,6 +13,7 @@ function global:SqlType() {
 
     return $sql_type
 }
+
 function global:CsType() {
     [CmdletBinding()]
     Param(
@@ -36,6 +37,27 @@ function global:CsType() {
     }
 
     return $cs_type
+}
+
+function global:CsValue() {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $true, ValueFromPipeline, Position = 1)]
+        $column
+    )
+
+    $cs_value = "?"
+
+    switch -Wildcard ($column.DbDataType.ToLower()) {
+        "bit" { $cs_value = "true" }
+        "int" { $cs_value = "0" }
+        "float" { $cs_value = "0" }
+        "uniqueidentifier" { $cs_value = "Guid.NewGuid()" }
+        "date*" { $cs_value = "DateTime.Now" }
+        "*char" { $cs_value = '"aa"'}
+    }
+
+    return $cs_value
 }
 
 function global:TsType() {

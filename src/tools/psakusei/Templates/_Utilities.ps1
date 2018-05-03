@@ -1,7 +1,12 @@
 $class_name = $table.name | Pascal
 $class_names = $class_name | Pluralize
 
+$collection = $class_name + "Collection"
+$repository = "I" + $class_name + "Repository"
+$validator = $class_name + "Validator"
+$ivalidator = "IValidator<" + $class_name + ">"
 $table_type = $class_name + "TableType"
+$builder = $class_name + "Builder"
 
 $var_name = $class_name | Last | Lower
 $var_names = $class_name | Last | Lower | Pluralize

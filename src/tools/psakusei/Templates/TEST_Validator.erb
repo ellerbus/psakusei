@@ -1,0 +1,53 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $config.OutFile = "Common/Validators/$($validator)Tests.cs" -%>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using FluentValidation.TestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using <%= $config.Namespace -replace 'Tests$', 'Common' %>.Models;
+using <%= $config.Namespace -replace 'Tests$', 'Common' %>.Validators;
+
+namespace <%= $config.Namespace %>.Core.Validators
+{
+    [TestClass]
+    public class <%= $validator %>Tests
+    {
+        #region Members
+
+        private <%= $validator %> SubjectUnderTest;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            SubjectUnderTest = new <%= $validator %>();
+        }
+
+        #endregion
+        
+        #region Validation Rule Tests
+
+        <%- foreach ($c in $columns) { -%>
+        [TestMethod]
+        public void <%= $validator %>_RuleFor_<%= $c.Name | Pascal %>()
+        {
+            var item = new <%= $class_name %>();
+
+            item.<%= $c.Name | Pascal %> = default(<%= $c | CsType %>);
+            SubjectUnderTest.ShouldNotHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, item);
+            <% if (($c | CsType) -eq 'string') { %>
+            item.<%= $c.Name | Pascal %> = "";
+            SubjectUnderTest.ShouldHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, item);
+            
+            item.<%= $c.Name | Pascal %> = new string('0', <%= $c.Length %>);
+            SubjectUnderTest.ShouldNotHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, item);
+            
+            item.<%= $c.Name | Pascal %> = new string('0', <%= $c.Length %> + 1);
+            SubjectUnderTest.ShouldHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, item);
+            <% } %>
+        }
+        
+        <%- } -%>
+        #endregion
+    }
+}

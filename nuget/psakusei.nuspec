@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>psakusei</id>
-    <version>0.0.44</version>
+    <version>0.0.46</version>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Code Generator via PowerShell</description>
     <releaseNotes></releaseNotes>

@@ -1,0 +1,49 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $config.OutFile = "Repositories/$repository.cs" -%>
+using System;
+using System.Collections.Generic;
+using Insight.Database;
+using <%= $config.Namespace %>.Models;
+
+namespace <%= $config.Namespace %>.Repositories
+{
+	///	<summary>
+	/// Repository Interface for <%= $class_name %>
+	///	</summary>
+	public interface <%= $repository %>
+	{
+		/////	<summary>
+		/////	Dynamic SQL Sample
+		/////	</summary>
+		//[Sql("select * from <%= $table.Name %> where createdAt > @createdAfter")]
+		//IList<<%= $class_name %>> Get<%= $class_names %>(DateTime createdAfter);
+
+		///	<summary>
+		///	Gets many <%= $class_names %> by calling the
+		///	stored procedure <%= $class_name %>SelectMany
+		///	</summary>
+		[Sql("<%= $class_name %>SelectMany")]
+		IList<<%= $class_name %>> Get<%= $class_names %>();
+	
+		///	<summary>
+		///	Gets a single <%= $class_name %> by primary key calling the
+		///	stored procedure <%= $class_name %>SelectOne
+		///	</summary>
+		[Sql("<%= $class_name %>SelectOne")]
+		<%= $class_name %> Get<%= $class_name %>(<%= $primary_keys | ForEach-Object { "$($_ | CsType) $($_.Name)" } | Combine -Sep ", " %>);
+
+		///	<summary>
+		///	Saves a single <%= $class_name %> calling the
+		///	stored procedure <%= $class_name %>MergeOne
+		///	</summary>
+		[Sql("<%= $class_name %>MergeOne")]
+		void Save<%= $class_name %>(<%= $class_name %> <%= $var_name %>);
+
+		///	<summary>
+		///	Saves many <%= $class_names %> calling the
+		///	stored procedure <%= $class_name %>MergeMany
+		///	</summary>
+		//[Sql("<%= $class_name %>MergeMany")]
+		//void Save<%= $class_names %>(IEnumerable<<%= $class_name %>> <%= $var_names %>);
+	}
+}

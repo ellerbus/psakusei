@@ -85,6 +85,40 @@ Describe "Schema" {
             $results | Should Be "string"
         }
     }
+    Context "CsValue" {
+        It "should return bool for bit" {
+            $results = CsValue(@{ DbDataType = "bit" })
+            $results | Should Be "true"
+        }
+        It "should return int for int" {
+            $results = CsValue(@{ DbDataType = "int" })
+            $results | Should Be "0"
+        }
+        It "should return double for float" {
+            $results = CsValue(@{ DbDataType = "float" })
+            $results | Should Be "0"
+        }
+        It "should return Guid for uniqueidentifier" {
+            $results = CsValue(@{ DbDataType = "uniqueidentifier" })
+            $results | Should Be "Guid.NewGuid()"
+        }
+        It "should return DateTime for date" {
+            $results = CsValue(@{ DbDataType = "date" })
+            $results | Should Be "DateTime.Now"
+        }
+        It "should return DateTime for datetime" {
+            $results = CsValue(@{ DbDataType = "datetime" })
+            $results | Should Be "DateTime.Now"
+        }
+        It "should return string for char" {
+            $results = CsValue(@{ DbDataType = "char" })
+            $results | Should Be '"aa"'
+        }
+        It "should return string for varchar" {
+            $results = CsValue(@{ DbDataType = "varchar" })
+            $results | Should Be '"aa"'
+        }
+    }
     Context "TsType" {
         It "should return boolean for bit" {
             $results = TsType(@{ DbDataType = "bit" })

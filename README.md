@@ -27,7 +27,11 @@ PM\> Invoke-psakusei -ConnectionString "Data Source=.; Database=DBNAME; <creds>"
 
 - `-Project`: Optional - Defaults to current the Project, or specify the name of the project to attach the final code file to
 
-- `-Force`: Optional - Defaults to false, whether or not to forcibly override an existing file during template generation
+- `-Force`: Optional - Defaults to false, whether or not to forcibly overwrite an existing file during template generation
+
+### Helper
+
+To simplify entering connection strings over and over, check out the [gencode] sample script. This file can be copied to the solution root folder, modified to your liking, and called from the Package Manager Console as follows: `.\gencode.ps1 -Project -Template -Table`. The sample provided uses a SQL Server LocalDB to demonstrate path setups (in case SQLite was preferred).
 
 ## Templates
 
@@ -59,3 +63,4 @@ psakusei uses [DatabaseSchemaReader] to read various database engine schemas int
 [psake]: https://github.com/psake/psake
 [Ruby Inflection]: https://github.com/rails/rails/blob/master/activesupport/lib/active_support/inflections.rb
 [Templates Folder]: https://github.com/ellerbus/psakusei/tree/master/src/tools/psakusei/Templates
+[gencode]: https://github.com/ellerbus/psakusei/blob/master/gencode.ps1

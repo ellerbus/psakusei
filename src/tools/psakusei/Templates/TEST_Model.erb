@@ -1,0 +1,56 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $config.OutFile = "Common/Models/$($class_name)Tests.cs" -%>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using <%= $config.Namespace -replace 'Tests$', 'Common' %>.Models;
+
+namespace <%= $config.Namespace %>.Core.Models
+{
+    [TestClass]
+    public class <%= $class_name %>Tests
+    {
+        #region Constructor Tests
+        
+        [TestMethod]
+        public void <%= $class_name %>_EmptyConstructor_Should_FlagModified()
+        {
+            var <%= $var_name %> = new <%= $class_name %>()
+            {
+                <%= $columns | ForEach-Object { "$($_.Name | Pascal) = $($_ | CsValue)" } | Combine -Sep ",`n$(' '*16)" %>
+            };
+
+            <%= $var_name %>.IsModified.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void <%= $class_name %>_FullConstructor_Should_FlagNotModified()
+        {
+            var <%= $var_name %> = new <%= $class_name %>(
+                <%= $columns | ForEach-Object { "$($_.Name | Camel): $($_ | CsValue)" } | Combine -Sep ",`n$(' '*16)" %>
+                );
+
+            <%= $var_name %>.IsModified.Should().BeFalse();
+        }
+        
+        #endregion
+
+        #region Property Tests
+        
+        <%- foreach ($c in $columns){ -%>
+        //[TestMethod]
+        //public void <%= $class_name %>_<%= $c.Name | Pascal %>_Should_DoSomething()
+        //{
+        //  var expected = <%= $c | CsValue %>;
+        //
+        //	var <%= $var_name %> = new <%= $class_name %>() { <%= $c.Name | Pascal %> = <%= $c | CsValue %> };
+        //
+        //	<%= $var_name %>.<%= $c.Name | Pascal %>.Should().Be(expected);
+        //}
+
+        <%- } -%>
+        #endregion
+    }
+}

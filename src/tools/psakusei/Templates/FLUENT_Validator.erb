@@ -1,0 +1,36 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $config.OutFile = "Validators/$validator.cs" -%>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using FluentValidation;
+using <%= $config.Namespace %>.Models;
+
+namespace <%= $config.Namespace %>.Validators
+{
+	///	<summary>
+	///	Represents a basic validator for <%= $class_name %>
+	///	</summary>
+	public class <%= $validator %> : AbstractValidator<<%= $class_name %>>
+	{
+		public <%= $validator %>()
+		{
+			CascadeMode = CascadeMode.Continue;
+
+			<%- foreach ($c in $columns) { -%>
+			RuleFor(x => x.<%= $c.Name | Pascal %>)
+				.Cascade(CascadeMode.StopOnFirstFailure)
+				.NotNull()
+				.NotEmpty()<% if (($c | CsType) -eq 'string') { %>
+				.Length(0, <%= $c.Length %>)<% } %>;
+			<%- if ($c.IsForeignKey) {-%>
+			//Foreign Key Validation
+			//RuleFor(x => x.<%= ($c.Name | Pascal) -replace 'Id$', '' %>)
+			//	.NotEmpty();
+			<%- } -%>
+
+			<%- } -%>
+		}
+	}
+}
