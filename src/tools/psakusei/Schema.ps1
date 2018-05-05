@@ -50,8 +50,8 @@ function global:CsValue() {
 
     switch -Wildcard ($column.DbDataType.ToLower()) {
         "bit" { $cs_value = "true" }
-        "int" { $cs_value = "0" }
-        "float" { $cs_value = "0" }
+        "int" { $cs_value = "1" }
+        "float" { $cs_value = "1.0" }
         "uniqueidentifier" { $cs_value = "Guid.NewGuid()" }
         "date*" { $cs_value = "DateTime.Now" }
         "*char" { $cs_value = '"aa"'}

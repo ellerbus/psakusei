@@ -128,6 +128,10 @@ function global:Camel {
     )
     
     $parts = Split($text)
+
+    if ($parts -is [string]) {
+        return $parts
+    }
     
     for ($x = 0; $x -lt $parts.Length; $x += 1) {
         if ($x -eq 0) {

@@ -26,8 +26,8 @@ set xact_abort on
 merge into dbo.<%= $table.Name %> as tgt
 using
 (
-    select  <%= $primary_keys | ForEach-Object { "@$($_.Name)" } | Combine -Sep ",`n$(' '*12)" %>,
-  	        <%= $update_columns | ForEach-Object { "@$($_.Name)" } | Combine -Sep ",`n$(' '*12)" %>
+    select  <%= $primary_keys | ForEach-Object { "$($_.Name)" } | Combine -Sep ",`n$(' '*12)" %>,
+  	        <%= $update_columns | ForEach-Object { "$($_.Name)" } | Combine -Sep ",`n$(' '*12)" %>
     from    @items
 )
 as x

@@ -59,11 +59,19 @@ Describe "Casing" {
             $items = "Some_FUNNYName" | Constant
             $items | Should Be "SOME_FUNNY_NAME"
         }
+        It "should constant case one" {
+            $items = "one" | Constant
+            $items | Should Be "ONE"
+        }
     }
     Context "global:Snake" {
         It "should snake case" {
-            $items = "Some_FUNNYName" | Constant
+            $items = "Some_FUNNYName" | Snake
             $items | Should Be "some_funny_name"
+        }
+        It "should snake case one" {
+            $items = "one" | Snake
+            $items | Should Be "one"
         }
     }
     Context "global:Spine" {
@@ -71,17 +79,29 @@ Describe "Casing" {
             $items = "Some_FUNNYName" | Spine
             $items | Should Be "some-funny-name"
         }
+        It "should spine-case one" {
+            $items = "one" | Spine
+            $items | Should Be "one"
+        }
     }
     Context "global:Pascal" {
         It "should pascal case" {
             $items = "Some_FUNNYName" | Pascal
             $items | Should Be "SomeFunnyName"
         }
+        It "should pascal case one" {
+            $items = "one" | Pascal
+            $items | Should Be "one"
+        }
     }
     Context "global:Label" {
         It "should label case" {
             $items = "Some_FUNNYName" | Label
             $items | Should Be "Some Funny Name"
+        }
+        It "should label case one" {
+            $items = "one" | Label
+            $items | Should Be "One"
         }
     }
     Context "global:Camel" {
@@ -93,6 +113,10 @@ Describe "Casing" {
             $items = "member_id" | Camel
             $items | Should Be "memberId"
         }
+        It "should camel case one" {
+            $items = "one" | Camel
+            $items | Should Be "one"
+        }
     }
     Context "global:Last" {
         It "should get last word" {
@@ -102,6 +126,10 @@ Describe "Casing" {
         It "should get last word" {
             $items = "Member" | Last
             $items | Should Be "Member"
+        }
+        It "should camel case one" {
+            $items = "one" | Last
+            $items | Should Be "one"
         }
     }
 }

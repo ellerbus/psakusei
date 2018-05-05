@@ -41,9 +41,9 @@ namespace <%= $config.Namespace %>.Models
         {
             get
             {
-                string pk = "[" + <%= $primary_keys | ForEach-Object { $_.Name | Pascal } | Combine -Sep ", " %>;
+                string pk = "[" + <%= $primary_keys | ForEach-Object { $_.Name | Pascal } | Combine -Sep ", " %> + "]";
                 
-                string uq = "[" + <%= $unique_keys | ForEach-Object { $_.Name | Pascal } | Combine -Sep ", " %>;
+                string uq = "[" + <%= $unique_keys | ForEach-Object { $_.Name | Pascal } | Combine -Sep ", " %> + "]";
                 
                 return "{0}, pk={1}, uq={2}".FormatArgs(GetType().Name, pk, uq);
             }
@@ -67,7 +67,7 @@ namespace <%= $config.Namespace %>.Models
         ///	Gets / Sets database column '<%= $column.Name %>'
         ///	</summary>
         [Column("<%= $column.Name %>")]
-        public virtual <%= $column | CsType %> <%= $column.Name | Pascal %>
+        public <%= $column | CsType %> <%= $column.Name | Pascal %>
         {
             get { return _<%= $column.Name | Camel %>; }
             set { IsModified |= _<%= $column.Name | Camel %> != value; _<%= $column.Name | Camel %> = value; }
@@ -81,22 +81,22 @@ namespace <%= $config.Namespace %>.Models
         
         <%- foreach ($fk in $foreign_keys) { -%>
         /////	<summary>
-        /////	Gets / Sets the foreign key to '<%= $column.Name %>'
+        /////	Gets / Sets the foreign key to '<%= $fk.Name %>'
         /////	</summary>
-        //public <%= ($fk.Name | Pascal) -replace 'Id$', '') %> <%= ($fk.Name | Pascal) -replace 'Id$', '') %>
+        //public <%= ($fk.Name | Pascal) -replace 'Id$', '' %> <%= ($fk.Name | Pascal) -replace 'Id$', '' %>
         //{
         //	get
         //	{
-        //		return _<%= ($fk.Name | Camel) -replace 'Id$', '') %>
+        //		return _<%= ($fk.Name | Camel) -replace 'Id$', '' %>;
         //	}
         //	internal set
         //	{
-        //		_<%= ($fk.Name | Camel) -replace 'Id$', '') %> = value;
+        //		_<%= ($fk.Name | Camel) -replace 'Id$', '' %> = value;
         //
         //		<%= $fk.Name | Pascal %> = value == null ? default(<%= $fk | CsType %>) : value.<%= $fk.Name | Pascal %>;
         //	}
         //}
-        //private <%= ($fk.Name | Pascal) -replace 'Id$', '') %> _<%= ($fk.Name | Camel) -replace 'Id$', '') %>;
+        //private <%= ($fk.Name | Pascal) -replace 'Id$', '' %> _<%= ($fk.Name | Camel) -replace 'Id$', '' %>;
         
         <%- } -%>
         #endregion

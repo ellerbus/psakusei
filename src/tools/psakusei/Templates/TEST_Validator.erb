@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation.TestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using <%= $config.Namespace -replace 'Tests$', 'Common' %>.Models;
-using <%= $config.Namespace -replace 'Tests$', 'Common' %>.Validators;
+using <%= $common_ns %>.Models;
+using <%= $common_ns %>.Validators;
 
 namespace <%= $config.Namespace %>.Core.Validators
 {
@@ -31,19 +31,19 @@ namespace <%= $config.Namespace %>.Core.Validators
         [TestMethod]
         public void <%= $validator %>_RuleFor_<%= $c.Name | Pascal %>()
         {
-            var item = new <%= $class_name %>();
+            var <%= $var_name %> = new <%= $class_name %>();
 
-            item.<%= $c.Name | Pascal %> = default(<%= $c | CsType %>);
-            SubjectUnderTest.ShouldNotHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, item);
+            <%= $var_name %>.<%= $c.Name | Pascal %> = default(<%= $c | CsType %>);
+            SubjectUnderTest.ShouldNotHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, <%= $var_name %>);
             <% if (($c | CsType) -eq 'string') { %>
-            item.<%= $c.Name | Pascal %> = "";
-            SubjectUnderTest.ShouldHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, item);
+            <%= $var_name %>.<%= $c.Name | Pascal %> = "";
+            SubjectUnderTest.ShouldHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, <%= $var_name %>);
             
-            item.<%= $c.Name | Pascal %> = new string('0', <%= $c.Length %>);
-            SubjectUnderTest.ShouldNotHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, item);
+            <%= $var_name %>.<%= $c.Name | Pascal %> = new string('0', <%= $c.Length %>);
+            SubjectUnderTest.ShouldNotHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, <%= $var_name %>);
             
-            item.<%= $c.Name | Pascal %> = new string('0', <%= $c.Length %> + 1);
-            SubjectUnderTest.ShouldHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, item);
+            <%= $var_name %>.<%= $c.Name | Pascal %> = new string('0', <%= $c.Length %> + 1);
+            SubjectUnderTest.ShouldHaveValidationErrorFor(v => v.<%= $c.Name | Pascal %>, <%= $var_name %>);
             <% } %>
         }
         

@@ -8,7 +8,7 @@ create procedure dbo.<%= $proc %>
 as
 
 update	t
-set		<%= $update_columns | ForEach-Object { "t.$($_.Name) = x$($_.Name)" } | Combine -Sep ",`n$(' '*8)" %>
+set		<%= $update_columns | ForEach-Object { "t.$($_.Name) = x.$($_.Name)" } | Combine -Sep ",`n$(' '*8)" %>
 from	dbo.<%= $table.Name %> t
 		inner join @items x
 			on	<%= $primary_keys | ForEach-Object { "t.$($_.Name) = x.$($_.Name)" } | Combine -Sep "`n$(' '*12)and " %>
