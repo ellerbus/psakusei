@@ -233,5 +233,9 @@ function Add-RequiredReferences() {
     
     $schemaReference = $project.Object.References["DatabaseSchemaReader"]
 
+    if ($schemaReference -eq $null) {
+        throw "NULL Reference do you have psakusei installed on $($project.Name)"
+    }
+
     Add-Type -Path $schemaReference.Path
 }
