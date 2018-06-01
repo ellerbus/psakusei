@@ -1,0 +1,100 @@
+<%- . ($config.Templates + "/_Utilities.ps1") -%>
+<%- $config.OutFile = "Repositories/$repository.cs" -%>
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using Dapper;
+using <%= $config.Namespace %>.Models;
+
+namespace <%= $config.Namespace %>.Repositories
+{
+    ///	<summary>
+    ///
+    ///	</summary>
+    public class <%= $repository %>    
+    {
+        #region <%= $class_name %>s
+
+        private IDbConnection _conn;
+
+        #endregion
+
+        #region Constructors
+
+        public <%= $repository %>(IDbConnection conn)
+        {
+            _conn = conn;
+        }
+        
+        #endregion
+
+        #region Methods
+
+        public void Add(<%= $class_name %> <%= $var_name %>)
+        {
+            string sql = @"
+                insert into <%= $table.schema %>.<%= $table.Name %>
+                    (
+                        <%= $insert_columns | ForEach-Object { $_.Name } | Combine -Sep ",`n$(' '*24)" %>
+                    )
+                    values
+                    (
+                        <%= $insert_columns | ForEach-Object { "@$($_.Name | Pascal)" } | Combine -Sep ",`n$(' '*24)" %>
+                    )
+                ";
+            
+            _conn.Execute(sql, param: <%= $var_name %>);
+        }
+
+        public void Update(<%= $class_name %> <%= $var_name %>)
+        {
+            string sql = @"
+                update	dbo.<%= $table.Name %>
+                set		<%= $update_columns | ForEach-Object { "$($_.Name) = @$($_.Name | Pascal)" } | Combine -Sep ",`n$(' '*24)" %>
+                where   <%= $primary_keys | ForEach-Object { "$($_.Name) = @$($_.Name | Pascal)" } | Combine -Sep "`n$(' '*16)  and   " %>
+                ";
+            
+            _conn.Execute(sql, param: <%= $var_name %>);
+        }
+
+        public void Remove(<%= $class_name %> <%= $var_name %>)
+        {
+            string sql = @"
+                delete
+                from    dbo.<%= $table.Name %>
+                where   <%= $primary_keys | ForEach-Object { "$($_.Name) = @$($_.Name | Pascal)" } | Combine -Sep "`n$(' '*16)  and   " %>
+                ";
+            
+            _conn.Execute(sql, param: <%= $var_name %>);
+        }
+
+        public <%= $class_name %> Get(<%= $primary_keys | ForEach-Object { "$($_ | CsType) $($_.Name | Camel)" } | Combine -Sep ", " %>)
+        {
+            string sql = @"
+                select	*
+                from    dbo.<%= $table.Name %>
+                where   <%= $primary_keys | ForEach-Object { "$($_.Name) = @$($_.Name | Pascal)" } | Combine -Sep "`n$(' '*16)  and   " %>
+                ";
+
+            <%= $class_name %> <%= $var_name %> = new <%= $class_name %>()
+            {
+                <%= $primary_keys | ForEach-Object { "$($_.Name | Pascal) = $($_.Name | Camel)" } | Combine -Sep ",`n$(' '*16)" %>
+            };
+
+            return _conn.Query<<%= $class_name %>>(sql, param: <%= $var_name %>).FirstOrDefault();
+        }
+
+        public IList<<%= $class_name %>> GetAll()
+        {
+            string sql = @"
+                select	*
+                from    dbo.<%= $table.Name %>
+                ";
+
+            return _conn.Query<<%= $class_name %>>(sql).ToList();
+        }
+
+        #endregion
+    }
+}
